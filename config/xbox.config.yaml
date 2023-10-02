@@ -1,16 +1,25 @@
 teleop_twist_joy_node:
   ros__parameters:
-    axis_linear:  # Left thumb stick vertical
-      x: 1
-    scale_linear:
-      x: 0.7
-    scale_linear_turbo:
-      x: 1.5
+    require_enable_button: False
 
-    axis_angular:  # Left thumb stick horizontal
+    axis_linear: # Left trigger
+      x: 2
+    scale_linear: # Max linear speed [m/s]
+      x: 0.6
+
+    axis_angular: # Left thumb stick horizontal
       yaw: 0
-    scale_angular:
-      yaw: 0.4
+    scale_angular: # Max angular speed: scale * [-1, 1] should be in [rad/s]
+      yaw: 2.5
 
-    enable_button: 2  # Left trigger button
-    enable_turbo_button: 5  # Right trigger button
+    # if a pad has two triggers, first one can be linear forward, and the second one to be linear backward
+    read_linear_from_triggers: True
+    axis_linear_backward: # Right trigger
+      x: 5
+
+    # turbo settings
+    enable_turbo_button: 3 # Y button
+    scale_linear_turbo:
+      x: 1.4
+    scale_angular_turbo:
+      yaw: 3.5
