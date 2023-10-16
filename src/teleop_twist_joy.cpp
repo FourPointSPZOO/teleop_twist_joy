@@ -78,7 +78,9 @@ namespace teleop_twist_joy {
         bool sent_disable_msg;
 
         std::chrono::duration<double> control_loop_period_ = 100ms;
+        std::chrono::duration<double> joy_keep_alive_period_ = 2 * control_loop_period_;
         std::chrono::time_point <std::chrono::steady_clock> last_joy_msg_time_;
+        rclcpp::TimerBase::SharedPtr keepalive_timer_;
 
         const double trigger_scale_ = 2.0;
         const double trigger_offset_ = -1.0;
@@ -269,6 +271,15 @@ namespace teleop_twist_joy {
 
         callback_handle = this->add_on_set_parameters_callback(param_callback);
         pimpl_->sendCmdVelMsg(std::make_shared<sensor_msgs::msg::Joy>(), "normal");
+
+        // Create a wall timer that checks if the joy connection is up. Otherwise, publish a zero velocity command.
+        pimpl_->keepalive_timer_ = this->create_wall_timer(pimpl_->joy_keep_alive_period_, [this]() -> void {
+            if (std::chrono::steady_clock::now() - pimpl_->last_joy_msg_time_ > pimpl_->joy_keep_alive_period_) {
+                pimpl_->sendCmdVelMsg(std::make_shared<sensor_msgs::msg::Joy>(), "normal");
+                ROS_INFO_NAMED("TeleopTwistJoy", "%s",
+                               "Have not received a joy msg in a while. Publishing empty message.");
+            }
+        });
     }
 
     TeleopTwistJoy::~TeleopTwistJoy() {
