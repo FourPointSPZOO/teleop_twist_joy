@@ -1,5 +1,7 @@
 teleop_twist_joy_node:
   ros__parameters:
+    mac_address: "5C:BA:37:25:55:A7"
+
     require_enable_button: False
 
     axis_linear: # Left trigger

@@ -11,18 +11,19 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
 endif()
 
 find_package(ament_cmake REQUIRED)
-
 find_package(geometry_msgs REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(rclcpp_components REQUIRED)
 find_package(sensor_msgs REQUIRED)
+find_package(Boost REQUIRED COMPONENTS serialization)
 
-add_library(${PROJECT_NAME} SHARED src/teleop_twist_joy.cpp)
+add_library(${PROJECT_NAME} SHARED src/teleop_twist_joy.cpp src/l2ping.cpp)
 target_link_libraries(${PROJECT_NAME}
   ${geometry_msgs_TARGETS}
   rclcpp::rclcpp
   rclcpp_components::component
   ${sensor_msgs_TARGETS}
+  ${Boost_LIBRARIES}
 )
 
 include(GenerateExportHeader)
